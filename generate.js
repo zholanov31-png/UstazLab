@@ -1,34 +1,44 @@
 export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
+  
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
+  
     if (req.method !== 'POST') {
-      return res.status(405).json({ error: 'Тек POST сұранысы қабылданады' });
+      return res.status(405).json({ error: 'Method not allowed' });
     }
   
     try {
       const { prompt } = req.body;
-      const apiKey = process.env.GEMINI_API_KEY; // Vercel-дегі кілт
+      const apiKey = process.env.GEMINI_API_KEY;
   
       if (!apiKey) {
-        return res.status(500).json({ error: 'API кілт табылмады' });
+        return res.status(500).json({ error: 'API кілті табылмады (GEMINI_API_KEY қосылмаған)' });
       }
   
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
+          contents: [{ parts: [{ text: prompt || "Сабақ жоспарын құру" }] }]
         })
       });
   
       const data = await response.json();
-      
-      if (data.candidates && data.candidates.length > 0) {
-        const aiText = data.candidates[0].content.parts[0].text;
-        return res.status(200).json({ text: aiText });
-      } else {
-        return res.status(500).json({ error: 'AI жауап бермеді', details: data });
-      }
+      const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Жауап генерацияланбады';
+  
+      return res.status(200).json({ success: true, result: resultText });
   
     } catch (error) {
-      return res.status(500).json({ error: error.message });
+      console.error('API Error:', error);
+      return res.status(500).json({ error: 'Серверде қате кетті: ' + error.message });
     }
   }
