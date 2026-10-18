@@ -159,6 +159,13 @@ drop policy if exists "reflections: өзі қосады" on public.reflections;
 create policy "reflections: өзі қосады" on public.reflections
   for insert with check (user_id = auth.uid());
 
+-- ---------- 6. Функцияларды сырттан шақыруды жабу ----------
+-- Триггер функцияларын API арқылы шақыруға болмайды; is_researcher тек RLS үшін.
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+revoke execute on function public.prevent_role_change() from public, anon, authenticated;
+revoke execute on function public.is_researcher() from public, anon;
+grant execute on function public.is_researcher() to authenticated;
+
 -- =====================================================================
 -- ӨЗІҢІЗДІ ЗЕРТТЕУШІ ЕТУ (бір рет, сайтта тіркелгеннен кейін):
 --   update public.profiles set role = 'researcher'
