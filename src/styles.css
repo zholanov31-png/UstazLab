@@ -302,3 +302,78 @@ tr:last-child td { border-bottom: none; }
   .card { padding: 18px; }
   .page-header h2 { font-size: 22px; }
 }
+
+/* ===================== Ойын механикасы ===================== */
+.level-card { background: linear-gradient(135deg, var(--warning-soft), var(--card)); }
+.level-badge {
+  width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--warning); color: #fff; font-weight: 900; font-size: 20px;
+}
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+.badge-tile {
+  border: 1px dashed var(--border); border-radius: 14px; padding: 12px;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px;
+  opacity: .45; filter: grayscale(1);
+}
+.badge-tile.earned { opacity: 1; filter: none; border-style: solid; border-color: var(--warning); background: var(--warning-soft); }
+.badge-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--warning); color: #fff; margin-bottom: 4px;
+}
+.badge-icon.big { width: 84px; height: 84px; }
+.xp-toast {
+  position: fixed; right: 16px; bottom: 24px; z-index: 300;
+  background: var(--warning); color: #fff; font-weight: 800;
+  padding: 10px 16px; border-radius: 999px; box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 6px;
+  animation: toast-in .25s ease-out;
+}
+@keyframes toast-in { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Ұстаздың жолы */
+.journey { position: relative; display: flex; flex-direction: column; gap: 16px; }
+.journey::before {
+  content: ''; position: absolute; left: 21px; top: 20px; bottom: 20px;
+  width: 3px; background: var(--border); border-radius: 3px;
+}
+.journey-step { position: relative; display: flex; gap: 14px; align-items: flex-start; }
+.journey-node {
+  position: relative; z-index: 1; flex-shrink: 0;
+  width: 45px; height: 45px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--card); border: 3px solid var(--border); color: var(--muted);
+}
+.journey-step.open .journey-node { border-color: var(--accent); color: var(--accent); }
+.journey-step.done .journey-node { border-color: var(--success); background: var(--success); color: #fff; }
+.journey-step.locked .journey-card { opacity: .7; }
+.journey-card { flex: 1; min-width: 0; }
+
+/* Модуль ішіндегі кезеңдер */
+.stepper { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.step {
+  flex: 1; min-width: 92px; border: 1px solid var(--border); background: var(--card);
+  border-radius: 10px; padding: 8px 10px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600;
+}
+.step:disabled { opacity: .45; cursor: not-allowed; }
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--input); font-size: 12px;
+}
+.step.past .step-num { background: var(--success); color: #fff; }
+.step.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.step.active .step-num { background: var(--accent); color: #fff; }
+.dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border); background: transparent; cursor: pointer; padding: 0; }
+.dot.answered { background: var(--success); border-color: var(--success); }
+.dot.active { border-color: var(--accent); transform: scale(1.25); }
+.theory p { line-height: 1.7; }
+table.wrap th, table.wrap td { white-space: normal; vertical-align: top; }
+.example-stage { background: var(--input); border-left: 3px solid var(--accent); border-radius: 10px; padding: 12px 14px; }
+.submitted { background: var(--input); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; white-space: pre-wrap; }
+@media (max-width: 860px) {
+  .step-label { display: none; }
+  .step { min-width: 40px; justify-content: center; }
+}

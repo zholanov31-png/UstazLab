@@ -9,6 +9,7 @@ import { useProgress } from '../lib/useProgress';
 import { COMPETENCIES } from '../data/competencies';
 import { courseModules } from '../data/modules';
 import { ErrorBox, PageLoading } from '../components/ui';
+import { BadgeGrid, LevelBar } from '../components/Game';
 
 function Step({ done, locked, title, text, action }) {
   const Icon = done ? CheckCircle2 : locked ? Lock : Circle;
@@ -56,6 +57,8 @@ export default function Dashboard() {
       </div>
 
       <ErrorBox error={progress.error} />
+
+      <LevelBar game={progress.game} />
 
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card row" style={{ flexWrap: 'nowrap' }}>
@@ -126,7 +129,7 @@ export default function Dashboard() {
           done={progress.allModulesDone}
           locked={!pre}
           title="2-кезең: Курс модульдері"
-          text={`Үш модуль, әрқайсысының соңында академиялық рефлексия. Аяқталды: ${completedModules.length} / ${courseModules.length}.`}
+          text={`«Ұстаздың жолы»: 5 станция — теория, жағдаяттар, практикалық тапсырма және рефлексия. Аяқталды: ${completedModules.length} / ${courseModules.length}.`}
           action={pre && !progress.allModulesDone && (
             <Link to="/app/modules" className="btn btn-primary"><LayoutGrid size={18} /> Жалғастыру</Link>
           )}
@@ -140,6 +143,8 @@ export default function Dashboard() {
         />
       </div>
       )}
+
+      <BadgeGrid badges={progress.game.badges} />
 
       {pre && (
         <div className="card">

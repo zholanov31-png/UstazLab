@@ -21,15 +21,16 @@ export default function Research() {
   const load = async () => {
     setError(null);
     setData(null);
-    const [p, a, r, g] = await Promise.all([
+    const [p, a, r, g, t] = await Promise.all([
       supabase.from('profiles').select('*').order('created_at'),
       supabase.from('assessment_attempts').select('*'),
       supabase.from('reflections').select('*').order('created_at'),
       supabase.from('group_settings').select('*'),
+      supabase.from('task_submissions').select('*').order('created_at'),
     ]);
-    const err = p.error || a.error || r.error || g.error;
+    const err = p.error || a.error || r.error || g.error || t.error;
     if (err) return setError(err);
-    setData({ profiles: p.data, attempts: a.data, reflections: r.data, settings: g.data });
+    setData({ profiles: p.data, attempts: a.data, reflections: r.data, settings: g.data, submissions: t.data });
   };
 
   const togglePost = async (code, open) => {
@@ -146,6 +147,24 @@ export default function Research() {
         r.created_at.slice(0, 10),
       ]);
     downloadCsv(`ustazlab_рефлексиялар_${group}_${today()}.csv`, [['id', 'аты-жөні', 'топ', 'модуль', 'мәтін', 'күні'], ...rows]);
+  };
+
+  // Практикалық тапсырмалар (әр өріс — жеке баған)
+  const exportSubmissions = () => {
+    const ids = new Set(filtered.map((p) => p.id));
+    const byId = Object.fromEntries(filtered.map((p) => [p.id, p]));
+    const rows = [];
+    for (const mod of courseModules.filter((m) => m.ready)) {
+      const subs = data.submissions.filter((x) => x.module_id === mod.id && ids.has(x.user_id));
+      if (!subs.length) continue;
+      rows.push(['id', 'аты-жөні', 'топ', 'модуль', ...mod.task.fields.map((f) => f.label), 'күні']);
+      subs.forEach((x) => rows.push([
+        x.user_id, byId[x.user_id]?.full_name, byId[x.user_id]?.group_code || '', mod.title,
+        ...mod.task.fields.map((f) => x.content?.[f.key] ?? ''), x.created_at.slice(0, 10),
+      ]));
+      rows.push([]);
+    }
+    downloadCsv(`ustazlab_тапсырмалар_${group}_${today()}.csv`, rows.length ? rows : [['Тапсырма жоқ']]);
   };
 
   return (
@@ -277,6 +296,7 @@ export default function Research() {
           <button className="btn btn-primary" onClick={exportScores}><Download size={18} /> Құзырет балдары</button>
           <button className="btn btn-secondary" onClick={exportItems}><Download size={18} /> Сұрақтар бойынша</button>
           <button className="btn btn-secondary" onClick={exportReflections}><Download size={18} /> Рефлексиялар</button>
+          <button className="btn btn-secondary" onClick={exportSubmissions}><Download size={18} /> Практикалық тапсырмалар</button>
         </div>
       </div>
 

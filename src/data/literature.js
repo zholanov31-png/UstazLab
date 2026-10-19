@@ -24,4 +24,5 @@ export const literatureList = [
   { id: 18, status: 'verified', author: 'Hattie, J. (2008)', title: 'Visible Learning: A Synthesis of Over 800 Meta-Analyses Relating to Achievement', desc: 'Кері байланыс пен мұғалімнің оқу жетістігіне әсері.' },
   { id: 19, status: 'verified', author: 'Koster, R. (2013)', title: 'A Theory of Fun for Game Design (2nd ed.)', desc: 'Ойынның меңгеру процесі ретіндегі тартымдылығы.' },
   { id: 20, status: 'verified', author: 'McGonigal, J. (2011)', title: 'Reality Is Broken: Why Games Make Us Better and How They Can Change the World', desc: 'Мағыналы мақсаттар арқылы табандылықты арттыру.' },
+  { id: 21, status: 'check', author: 'Жоланов Ө.К., Сугирбаева Г.Д.', title: 'Тарих пәнін оқыту процесінде геймификация элементтерін қолданудың педагогикалық тиімділігі', desc: 'Тарихты оқытудағы геймификацияның теориялық негіздері, квест-сабақ, баламалы тарих, педагогикалық дизайн қағидалары. (Журнал атауы мен жылын қосыңыз.)' },
 ];

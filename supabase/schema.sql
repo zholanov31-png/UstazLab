@@ -159,6 +159,21 @@ drop policy if exists "reflections: өзі қосады" on public.reflections;
 create policy "reflections: өзі қосады" on public.reflections
   for insert with check (user_id = auth.uid());
 
+-- ---------- 4b. Практикалық тапсырмалар ----------
+create table if not exists public.task_submissions (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  module_id   integer not null,
+  content     jsonb not null,           -- { өріс_кілті: мәтін }
+  created_at  timestamptz not null default now(),
+  unique (user_id, module_id)
+);
+alter table public.task_submissions enable row level security;
+drop policy if exists "submissions_select" on public.task_submissions;
+create policy "submissions_select" on public.task_submissions for select using (user_id = auth.uid() or public.is_researcher());
+drop policy if exists "submissions_insert" on public.task_submissions;
+create policy "submissions_insert" on public.task_submissions for insert with check (user_id = auth.uid());
+
 -- ---------- 5b. Топ баптаулары (бақылау тобына шығыс диагностиканы ашу) ----------
 create table if not exists public.group_settings (
   group_code text primary key,
