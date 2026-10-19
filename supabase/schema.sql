@@ -159,6 +159,20 @@ drop policy if exists "reflections: өзі қосады" on public.reflections;
 create policy "reflections: өзі қосады" on public.reflections
   for insert with check (user_id = auth.uid());
 
+-- ---------- 5b. Топ баптаулары (бақылау тобына шығыс диагностиканы ашу) ----------
+create table if not exists public.group_settings (
+  group_code text primary key,
+  post_open  boolean not null default false,
+  updated_at timestamptz not null default now()
+);
+alter table public.group_settings enable row level security;
+drop policy if exists "group_settings_select" on public.group_settings;
+create policy "group_settings_select" on public.group_settings for select to authenticated using (true);
+drop policy if exists "group_settings_insert" on public.group_settings;
+create policy "group_settings_insert" on public.group_settings for insert to authenticated with check (public.is_researcher());
+drop policy if exists "group_settings_update" on public.group_settings;
+create policy "group_settings_update" on public.group_settings for update to authenticated using (public.is_researcher());
+
 -- ---------- 6. Функцияларды сырттан шақыруды жабу ----------
 -- Триггер функцияларын API арқылы шақыруға болмайды; is_researcher тек RLS үшін.
 revoke execute on function public.handle_new_user() from public, anon, authenticated;

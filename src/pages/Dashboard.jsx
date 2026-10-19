@@ -83,6 +83,38 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {progress.isControl ? (
+        <div className="stack">
+          <div className="alert alert-info">
+            Сіз <b>бақылау тобындасыз</b> ({progress.groupCode}). Сіздің қатысуыңыз зерттеу үшін өте маңызды:
+            нәтижелеріңіз эксперимент тобымен салыстырылады. Шығыс диагностикадан кейін барлық курс модульдері сізге де ашылады.
+          </div>
+          <Step
+            done={Boolean(pre)}
+            title="1-кезең: Кіріс диагностика"
+            text="10 жағдаят + 5 өзін-өзі бағалау сұрағы, шамамен 15 минут. Тек бір рет тапсырылады."
+            action={!pre && <Link to="/app/assessment/pre" className="btn btn-primary">Бастау</Link>}
+          />
+          <Step
+            done={Boolean(post)}
+            locked={!progress.canTakePost && !post}
+            title="2-кезең: Шығыс диагностика"
+            text={progress.canTakePost || post
+              ? 'Диагностика ашық. Кіріс диагностикадағы құралмен қайта өлшеу.'
+              : 'Зерттеуші ашқан күні қолжетімді болады. Әзірге әдеттегі сабақтарыңызды жалғастырыңыз.'}
+            action={progress.canTakePost && <Link to="/app/assessment/post" className="btn btn-success">Бастау</Link>}
+          />
+          <Step
+            done={progress.allModulesDone}
+            locked={!progress.canStartModules}
+            title="3-кезең: Курс модульдері (бонус)"
+            text="Шығыс диагностикадан кейін ашылады."
+            action={progress.canStartModules && !progress.allModulesDone && (
+              <Link to="/app/modules" className="btn btn-primary"><LayoutGrid size={18} /> Ашу</Link>
+            )}
+          />
+        </div>
+      ) : (
       <div className="stack">
         <Step
           done={Boolean(pre)}
@@ -107,6 +139,7 @@ export default function Dashboard() {
           action={progress.canTakePost && <Link to="/app/assessment/post" className="btn btn-success">Бастау</Link>}
         />
       </div>
+      )}
 
       {pre && (
         <div className="card">

@@ -55,7 +55,11 @@ export default function Assessment() {
     return (
       <div className="card stack center" style={{ maxWidth: 560, margin: '0 auto' }}>
         <h2>Шығыс диагностика әлі жабық</h2>
-        <p className="muted">Алдымен кіріс диагностиканы және барлық курс модульдерін аяқтаңыз.</p>
+        <p className="muted">
+          {progress.isControl
+            ? 'Бақылау тобы үшін шығыс диагностиканы зерттеуші белгіленген күні ашады.'
+            : 'Алдымен кіріс диагностиканы және барлық курс модульдерін аяқтаңыз.'}
+        </p>
         <Link to="/app" className="btn btn-primary">Дашбордқа оралу</Link>
       </div>
     );

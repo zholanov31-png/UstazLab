@@ -83,7 +83,8 @@ export default function AuthPage() {
               </div>
               <div className="field">
                 <label htmlFor="groupCode">Топ коды (міндетті емес)</label>
-                <input id="groupCode" className="input" value={form.groupCode} onChange={set('groupCode')} placeholder="Зерттеуші берген код, мысалы: EXP-1" />
+                <input id="groupCode" className="input" value={form.groupCode} onChange={set('groupCode')} placeholder="Оқытушы берген код, мысалы: EXP-3A" />
+                <p className="small muted" style={{ marginTop: 6 }}>Кодты оқытушыңыз береді. Қатесіз жазыңыз — кейін өзгерту мүмкін емес.</p>
               </div>
             </>
           )}

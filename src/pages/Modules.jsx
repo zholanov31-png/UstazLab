@@ -17,7 +17,12 @@ export default function Modules() {
       />
       <ErrorBox error={progress.error} />
 
-      {!progress.canStartModules && (
+      {!progress.canStartModules && progress.isControl && (
+        <div className="alert alert-info" style={{ marginBottom: 20 }}>
+          Сіз бақылау тобындасыз. Курс модульдері шығыс диагностикадан кейін ашылады.
+        </div>
+      )}
+      {!progress.canStartModules && !progress.isControl && (
         <div className="alert alert-info row-between" style={{ marginBottom: 20 }}>
           <span>Модульдерді бастамас бұрын кіріс диагностиканы тапсырыңыз.</span>
           <Link to="/app/assessment/pre" className="btn btn-primary">Диагностикаға өту</Link>

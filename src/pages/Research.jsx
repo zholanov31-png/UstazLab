@@ -4,7 +4,8 @@ import { supabase } from '../lib/supabase';
 import { COMPETENCIES } from '../data/competencies';
 import { assessmentItems, ASSESSMENT_VERSION, selfRatingItems } from '../data/assessment';
 import { courseModules } from '../data/modules';
-import { downloadCsv, fmt, pairedSummary } from '../lib/stats';
+import { downloadCsv, fmt, mannWhitney, mean, pairedSummary } from '../lib/stats';
+import { isControlGroup } from '../lib/useProgress';
 import { ErrorBox, PageHeader, PageLoading } from '../components/ui';
 
 const ROLE = { student: 'Магистрант', teacher: 'Мұғалім', researcher: 'Зерттеуші' };
@@ -20,14 +21,23 @@ export default function Research() {
   const load = async () => {
     setError(null);
     setData(null);
-    const [p, a, r] = await Promise.all([
+    const [p, a, r, g] = await Promise.all([
       supabase.from('profiles').select('*').order('created_at'),
       supabase.from('assessment_attempts').select('*'),
       supabase.from('reflections').select('*').order('created_at'),
+      supabase.from('group_settings').select('*'),
     ]);
-    const err = p.error || a.error || r.error;
+    const err = p.error || a.error || r.error || g.error;
     if (err) return setError(err);
-    setData({ profiles: p.data, attempts: a.data, reflections: r.data });
+    setData({ profiles: p.data, attempts: a.data, reflections: r.data, settings: g.data });
+  };
+
+  const togglePost = async (code, open) => {
+    const { error: err } = await supabase
+      .from('group_settings')
+      .upsert({ group_code: code, post_open: open, updated_at: new Date().toISOString() });
+    if (err) return setError(err);
+    load();
   };
 
   useEffect(() => { load(); }, []);
@@ -65,8 +75,24 @@ export default function Research() {
     return rows;
   }, [paired]);
 
+  // EXP пен CTRL салыстыру: бастапқы теңдік және өсімдер айырмасы
+  const between = useMemo(() => {
+    const done = participants.filter((p) => p.pre && p.post && p.group_code);
+    const exp = done.filter((p) => !isControlGroup(p.group_code));
+    const ctrl = done.filter((p) => isControlGroup(p.group_code));
+    const preOf = (list) => list.map((p) => avgScore(p.pre.scores));
+    const gainOf = (list) => list.map((p) => avgScore(p.post.scores) - avgScore(p.pre.scores));
+    return {
+      exp, ctrl,
+      baseline: { e: mean(preOf(exp)), c: mean(preOf(ctrl)), test: mannWhitney(preOf(exp), preOf(ctrl)) },
+      gain: { e: mean(gainOf(exp)), c: mean(gainOf(ctrl)), test: mannWhitney(gainOf(exp), gainOf(ctrl)) },
+    };
+  }, [participants]);
+
   if (error) return <ErrorBox error={error} />;
   if (!data) return <PageLoading />;
+
+  const postOpenFor = (code) => Boolean(data.settings.find((s) => s.group_code === code)?.post_open);
 
   // ---------- CSV экспорттары ----------
   const exportScores = () => {
@@ -142,6 +168,75 @@ export default function Research() {
           <span>Pre: <b>{filtered.filter((p) => p.pre).length}</b></span>
           <span>Post: <b>{filtered.filter((p) => p.post).length}</b></span>
         </div>
+      </div>
+
+      <div className="card stack">
+        <h3 style={{ fontSize: 18 }}>Топтарды басқару</h3>
+        <p className="small muted">
+          Коды <b>CTRL</b> деп басталатын топтар — бақылау тобы: модульдерді көрмейді, шығыс диагностиканы сіз ашқанда тапсырады.
+          Қалған топтар — эксперимент тобы: шығыс диагностика 5 модульден кейін өздігінен ашылады.
+        </p>
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Топ</th><th>Түрі</th><th>Қатысушы</th><th>Шығыс диагностика</th></tr></thead>
+            <tbody>
+              {groups.filter((g) => g !== '—').map((g) => {
+                const ctrl = isControlGroup(g);
+                const open = postOpenFor(g);
+                return (
+                  <tr key={g}>
+                    <td><b>{g}</b></td>
+                    <td>{ctrl ? 'Бақылау' : 'Эксперимент'}</td>
+                    <td>{participants.filter((p) => p.group_code === g).length}</td>
+                    <td>
+                      {ctrl ? (
+                        <button className={`btn ${open ? 'btn-secondary' : 'btn-success'}`} style={{ padding: '6px 12px', fontSize: 13 }} onClick={() => togglePost(g, !open)}>
+                          {open ? 'Ашық — жабу' : 'Жабық — ашу'}
+                        </button>
+                      ) : (
+                        <span className="small muted">Модульдерден кейін</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+              {groups.filter((g) => g !== '—').length === 0 && (
+                <tr><td colSpan={4} className="muted center">Әзірге топ коды бар қатысушы жоқ</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="card stack">
+        <h3 style={{ fontSize: 18 }}>Эксперимент тобы мен бақылау тобын салыстыру</h3>
+        {between.exp.length < 2 || between.ctrl.length < 2 ? (
+          <p className="muted">Салыстыру үшін әр топта кемінде 2 қатысушы екі диагностиканы да тапсыруы керек.
+            Қазір: эксперимент — {between.exp.length}, бақылау — {between.ctrl.length}.</p>
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>Көрсеткіш</th><th>EXP (n={between.exp.length})</th><th>CTRL (n={between.ctrl.length})</th><th>U</th><th>z</th><th>p</th><th>r</th></tr></thead>
+              <tbody>
+                {[['Кіріс деңгей (бастапқы теңдік)', between.baseline], ['Өсім (post − pre)', between.gain]].map(([label, s]) => (
+                  <tr key={label}>
+                    <td>{label}</td>
+                    <td>{fmt(s.e)}</td>
+                    <td>{fmt(s.c)}</td>
+                    <td>{fmt(s.test.U, 1)}</td>
+                    <td>{fmt(s.test.z, 2)}</td>
+                    <td style={{ fontWeight: 700, color: s.test.p < 0.05 ? 'var(--success)' : undefined }}>{fmt(s.test.p, 3)}</td>
+                    <td>{fmt(s.test.r, 2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <p className="small muted">
+          Дұрыс нәтиже: <b>кіріс деңгейде</b> p ≥ 0,05 (топтар басында тең), <b>өсімде</b> p &lt; 0,05 (эксперимент тобы айтарлықтай көбірек өсті).
+          r — эффект мөлшері (0,1 әлсіз · 0,3 орташа · 0,5 күшті). Қорытынды мәндерді JASP-та тексеріңіз.
+        </p>
       </div>
 
       <div className="card stack">
