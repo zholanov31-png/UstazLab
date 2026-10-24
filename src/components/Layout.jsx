@@ -6,30 +6,33 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { LangSwitch, useLang } from '../i18n/LangContext';
 
+// Мәзір атаулары src/i18n/strings.js-те (nav.*)
 const NAV = [
-  { section: 'Зерттеу курсы' },
-  { to: '/app', label: 'Дашборд', icon: BarChart3, end: true },
-  { to: '/app/modules', label: 'Курс модульдері', icon: LayoutGrid },
-  { section: 'Әдістемелік кітапхана' },
-  { to: '/app/methodology', label: 'Әдістемелік қоржын', icon: FolderOpen },
-  { to: '/app/sources', label: 'Интерактивті деректану', icon: Compass },
-  { to: '/app/methods', label: 'Инновациялық әдістер', icon: Target },
-  { to: '/app/gamification', label: 'Геймификация және квест', icon: PlayCircle },
-  { to: '/app/case-study', label: 'Тарихи кейстер банкі', icon: Users },
-  { to: '/app/visuals', label: 'Цифрлық визуализация', icon: ImageIcon },
-  { to: '/app/literature', label: 'Ғылыми әдебиеттер', icon: BookMarked },
+  { section: 'nav.course' },
+  { to: '/app', label: 'nav.dashboard', icon: BarChart3, end: true },
+  { to: '/app/modules', label: 'nav.modules', icon: LayoutGrid },
+  { section: 'nav.library' },
+  { to: '/app/methodology', label: 'nav.methodology', icon: FolderOpen },
+  { to: '/app/sources', label: 'nav.sources', icon: Compass },
+  { to: '/app/methods', label: 'nav.methods', icon: Target },
+  { to: '/app/gamification', label: 'nav.gamification', icon: PlayCircle },
+  { to: '/app/case-study', label: 'nav.caseStudy', icon: Users },
+  { to: '/app/visuals', label: 'nav.visuals', icon: ImageIcon },
+  { to: '/app/literature', label: 'nav.literature', icon: BookMarked },
 ];
 
 const THEMES = [
-  { key: 'light', label: 'Жарық', icon: Sun },
-  { key: 'dark', label: 'Қараңғы', icon: Moon },
-  { key: 'nomad', label: 'Номад', icon: Compass },
+  { key: 'light', icon: Sun },
+  { key: 'dark', icon: Moon },
+  { key: 'nomad', icon: Compass },
 ];
 
 export default function Layout() {
   const { profile, isResearcher, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { lang, t } = useLang();
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,14 +44,14 @@ export default function Layout() {
     navigate('/', { replace: true });
   };
 
-  const roleLabel = { student: 'Студент', teacher: 'Мұғалім', researcher: 'Зерттеуші' }[profile?.role] || '';
+  const roleLabel = profile?.role ? t(`role.${profile.role}`) : '';
 
   return (
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar-inner">
           <div className="row" style={{ flexWrap: 'nowrap' }}>
-            <button className="icon-btn" onClick={() => setMenuOpen(true)} aria-label="Мәзір">
+            <button className="icon-btn" onClick={() => setMenuOpen(true)} aria-label={t('nav.menu')}>
               <Menu size={22} />
             </button>
             <Link to="/app" className="brand">
@@ -56,12 +59,15 @@ export default function Layout() {
               <span className="brand-name">UstazLab</span>
             </Link>
           </div>
-          <div className="theme-switch" role="group" aria-label="Тақырып">
-            {THEMES.map(({ key, label, icon: Icon }) => (
-              <button key={key} className={theme === key ? 'active' : ''} onClick={() => setTheme(key)} title={label}>
-                <Icon size={14} /> <span className="theme-label">{label}</span>
-              </button>
-            ))}
+          <div className="row" style={{ gap: 8, flexWrap: 'nowrap' }}>
+            <LangSwitch />
+            <div className="theme-switch" role="group" aria-label={t('theme.group')}>
+              {THEMES.map(({ key, icon: Icon }) => (
+                <button key={key} className={theme === key ? 'active' : ''} onClick={() => setTheme(key)} title={t(`theme.${key}`)}>
+                  <Icon size={14} /> <span className="theme-label">{t(`theme.${key}`)}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </header>
@@ -73,7 +79,7 @@ export default function Layout() {
             <span className="brand-mark"><Sparkles size={17} /></span>
             <span className="brand-name">UstazLab</span>
           </span>
-          <button className="icon-btn" onClick={() => setMenuOpen(false)} aria-label="Жабу">
+          <button className="icon-btn" onClick={() => setMenuOpen(false)} aria-label={t('nav.close')}>
             <X size={20} />
           </button>
         </div>
@@ -82,7 +88,7 @@ export default function Layout() {
           <div className="row" style={{ flexWrap: 'nowrap' }}>
             <GraduationCap size={20} color="var(--accent)" />
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile?.full_name || 'Пайдаланушы'}</div>
+              <div style={{ fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile?.full_name || t('nav.user')}</div>
               <div className="small muted">
                 {roleLabel}
                 {profile?.group_code ? ` · ${profile.group_code}` : ''}
@@ -93,25 +99,27 @@ export default function Layout() {
 
         {NAV.map((item, i) =>
           item.section ? (
-            <div key={i} className="nav-section">{item.section}</div>
+            <div key={i} className="nav-section">{t(item.section)}</div>
           ) : (
             <NavLink key={item.to} to={item.to} end={item.end} className="nav-link">
-              <item.icon size={19} /> {item.label}
+              <item.icon size={19} /> {t(item.label)}
             </NavLink>
           ),
         )}
 
+        {lang !== 'kk' && <div className="lang-note">{t('common.contentKkOnly')}</div>}
+
         {isResearcher && (
           <>
-            <div className="nav-section">Зерттеуші</div>
+            <div className="nav-section">{t('nav.researcher')}</div>
             <NavLink to="/app/research" className="nav-link">
-              <FlaskConical size={19} /> Эксперимент деректері
+              <FlaskConical size={19} /> {t('nav.research')}
             </NavLink>
           </>
         )}
 
         <button className="nav-link" onClick={handleSignOut} style={{ marginTop: 'auto', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--danger)' }}>
-          <LogOut size={19} /> Жүйеден шығу
+          <LogOut size={19} /> {t('nav.signOut')}
         </button>
       </aside>
 

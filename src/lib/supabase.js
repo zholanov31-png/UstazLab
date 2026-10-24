@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { translate } from '../i18n/LangContext';
 
 const url = import.meta.env.VITE_SUPABASE_URL;
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -11,16 +12,23 @@ export const supabase = isSupabaseConfigured
     })
   : null;
 
-// Supabase қателерін қазақша түсінікті хабарламаға айналдыру
-export function humanizeError(error) {
+// Supabase қателерін түсінікті хабарламаға айналдыру.
+// t берілсе — таңдалған тілде (кіру беті), берілмесе — қазақша.
+const ERROR_KEYS = [
+  ['invalid login credentials', 'err.credentials'],
+  ['email not confirmed', 'err.notConfirmed'],
+  ['user already registered', 'err.exists'],
+  ['password should be at least', 'err.shortPassword'],
+  ['rate limit', 'err.rateLimit'],
+  ['duplicate key', 'err.duplicate'],
+  ['failed to fetch', 'err.network'],
+  ['network', 'err.network'],
+];
+
+export function humanizeError(error, t = (key) => translate('kk', key)) {
   if (!error) return '';
   const msg = (error.message || String(error)).toLowerCase();
-  if (msg.includes('invalid login credentials')) return 'Пошта немесе құпиясөз қате.';
-  if (msg.includes('email not confirmed')) return 'Поштаңызды растаңыз: кіріс жәшігіндегі хаттағы сілтемені басыңыз.';
-  if (msg.includes('user already registered')) return 'Бұл поштамен аккаунт бұрыннан бар. «Кіру» бетін қолданыңыз.';
-  if (msg.includes('password should be at least')) return 'Құпиясөз кемінде 6 таңбадан тұруы керек.';
-  if (msg.includes('rate limit')) return 'Тым көп әрекет. Бірнеше минуттан кейін қайталаңыз.';
-  if (msg.includes('duplicate key')) return 'Бұл нәтиже бұрын сақталған.';
-  if (msg.includes('failed to fetch') || msg.includes('network')) return 'Интернет байланысын тексеріңіз.';
-  return error.message || 'Белгісіз қате орын алды.';
+  const hit = ERROR_KEYS.find(([needle]) => msg.includes(needle));
+  if (hit) return t(hit[1]);
+  return error.message || t('err.unknown');
 }

@@ -5,21 +5,10 @@ import {
 } from 'lucide-react';
 import { COMPETENCIES } from '../data/competencies';
 import { courseModules } from '../data/modules';
+import { LangSwitch, useLang } from '../i18n/LangContext';
 
-// Станциялардың қысқа сипаттамасы (әдістің мәні — тарихи факт емес)
-const STATION_TEXT = {
-  1: 'Тарихи тақырып бойынша нақты өнім жасайтын сабақ жобасын құрастыру.',
-  2: 'Нақты педагогикалық жағдаятты талдап, шешімді дәлелдеу.',
-  3: 'Теорияны үйде, талқылау мен тапсырманы сабақта өткізу.',
-  4: 'Ойын элементтері мен квест арқылы тарихи ойлауды дамыту.',
-  5: 'Тарихи оқиғаны цифрлық әңгіме мен визуализация арқылы баяндау.',
-};
-
-const FLOW = [
-  { icon: ClipboardCheck, title: 'Кіріс диагностика', text: 'Педагогикалық жағдаяттар мен өзін-өзі бағалау арқылы бастапқы деңгей анықталады.' },
-  { icon: Target, title: '«Ұстаздың жолы»: 5 станция', text: 'Әр станция: теория, мысал, жағдаят, практикалық тапсырма және рефлексия.' },
-  { icon: LineChart, title: 'Шығыс диагностика', text: 'Сол құралмен қайта өлшеп, әр құзырет бойынша нақты өзгерісті көресіз.' },
-];
+// Мәтіндер src/i18n/strings.js файлында (қазақша / орысша / ағылшынша)
+const FLOW_ICONS = [ClipboardCheck, Target, LineChart];
 
 const CHIP_ICONS = [Sparkles, BookOpen, Compass, MessagesSquare, Target];
 
@@ -33,6 +22,7 @@ const STATION_IMG = {
 const STATION_ICON = { 4: Trophy, 5: BookOpen };
 
 export default function Landing() {
+  const { t } = useLang();
   return (
     <div className="container landing">
       <nav className="l-nav">
@@ -41,13 +31,14 @@ export default function Landing() {
           <span className="brand-name">UstazLab</span>
         </span>
         <div className="l-nav-links">
-          <a href="#stations">Станциялар</a>
-          <a href="#flow">Қалай өтеді</a>
-          <a href="#competencies">Құзыреттер</a>
+          <a href="#stations">{t('landing.nav.stations')}</a>
+          <a href="#flow">{t('landing.nav.flow')}</a>
+          <a href="#competencies">{t('landing.nav.competencies')}</a>
         </div>
         <div className="row" style={{ gap: 6, flexWrap: 'nowrap' }}>
-          <Link to="/auth" className="btn btn-ghost">Кіру</Link>
-          <Link to="/auth?mode=register" className="btn btn-dark">Бастау</Link>
+          <LangSwitch />
+          <Link to="/auth" className="btn btn-ghost l-signin">{t('common.signIn')}</Link>
+          <Link to="/auth?mode=register" className="btn btn-dark">{t('common.start')}</Link>
         </div>
       </nav>
 
@@ -56,23 +47,21 @@ export default function Landing() {
         <div className="hero-veil" />
         <div className="hero">
           <div className="stack hero-copy" style={{ gap: 22 }}>
-            <span className="eyebrow"><b>DGBL</b> Тарихты оқытудың инновациялық әдістері</span>
+            <span className="eyebrow"><b>DGBL</b> {t('landing.eyebrow')}</span>
             <h1>
-              Болашақ тарих педагогінің <span className="grad-text">кәсіби құзыреттілігін</span> дамыту
+              {t('landing.h1.before')}<span className="grad-text">{t('landing.h1.accent')}</span>{t('landing.h1.after')}
             </h1>
-            <p className="hero-lead">
-              Бес инновациялық әдісті ойын форматында меңгеруге және кәсіби құзыреттің өсуін өлшеуге арналған цифрлық практикум.
-            </p>
+            <p className="hero-lead">{t('landing.lead')}</p>
             <div className="row">
               <Link to="/auth?mode=register" className="btn btn-primary btn-lg">
-                Курсты бастау <ArrowRight size={20} />
+                {t('common.startCourse')} <ArrowRight size={20} />
               </Link>
-              <a href="#stations" className="btn btn-secondary btn-lg">Толығырақ</a>
+              <a href="#stations" className="btn btn-secondary btn-lg">{t('common.more')}</a>
             </div>
             <div className="hero-meta">
-              <div><strong>5</strong><span>инновациялық әдіс</span></div>
-              <div><strong>5</strong><span>өлшенетін құзырет</span></div>
-              <div><strong>pre / post</strong><span>диагностика</span></div>
+              <div><strong>5</strong><span>{t('landing.meta.methods')}</span></div>
+              <div><strong>5</strong><span>{t('landing.meta.competencies')}</span></div>
+              <div><strong>pre / post</strong><span>{t('landing.meta.diagnostics')}</span></div>
             </div>
           </div>
 
@@ -81,7 +70,7 @@ export default function Landing() {
               const Icon = CHIP_ICONS[i];
               return (
                 <div key={c.key} className={`chip chip-${i + 1}`}>
-                  <i><Icon size={14} /></i>{c.short}
+                  <i><Icon size={14} /></i>{t(`comp.${c.key}.short`)}
                 </div>
               );
             })}
@@ -92,9 +81,9 @@ export default function Landing() {
 
       <section id="stations" className="l-section">
         <div className="l-section-head">
-          <div className="kicker">Курс құрылымы</div>
-          <h2>«Ұстаздың жолы» — бес станция</h2>
-          <p>Әр станция диссертациядағы бір инновациялық әдіске арналған. Станциядан өткен сайын XP, деңгей және бейдж жинайсыз.</p>
+          <div className="kicker">{t('landing.stations.kicker')}</div>
+          <h2>{t('landing.stations.title')}</h2>
+          <p>{t('landing.stations.lead')}</p>
         </div>
         <div className="station-grid">
           {courseModules.map((m) => (
@@ -105,11 +94,11 @@ export default function Landing() {
                   : <div className="station-cover-fallback">{(() => { const I = STATION_ICON[m.id]; return <I size={56} strokeWidth={1.4} />; })()}</div>}
                 <span className="station-num">0{m.id}</span>
               </div>
-              <h3>{m.method}</h3>
-              <p>{STATION_TEXT[m.id]}</p>
+              <h3>{t(`station.${m.id}.method`)}</h3>
+              <p>{t(`station.${m.id}.text`)}</p>
               {m.ready
-                ? <span className="badge badge-success">Ашық</span>
-                : <span className="badge">Дайындалуда</span>}
+                ? <span className="badge badge-success">{t('common.open')}</span>
+                : <span className="badge">{t('common.inProgress')}</span>}
             </div>
           ))}
         </div>
@@ -117,16 +106,16 @@ export default function Landing() {
 
       <section id="flow" className="l-section">
         <div className="l-section-head">
-          <div className="kicker">Эксперимент барысы</div>
-          <h2>Үш кезең — бір нәтиже</h2>
+          <div className="kicker">{t('landing.flow.kicker')}</div>
+          <h2>{t('landing.flow.title')}</h2>
         </div>
         <div className="flow">
-          {FLOW.map(({ icon: Icon, title, text }, i) => (
-            <div key={title} className="card">
+          {FLOW_ICONS.map((Icon, i) => (
+            <div key={i} className="card">
               <div className="icon-box"><Icon size={22} /></div>
-              <div className="small muted" style={{ fontWeight: 700 }}>{i + 1}-кезең</div>
-              <h3 style={{ fontSize: 19 }}>{title}</h3>
-              <p className="muted small">{text}</p>
+              <div className="small muted" style={{ fontWeight: 700 }}>{t('landing.flow.step', { n: i + 1 })}</div>
+              <h3 style={{ fontSize: 19 }}>{t(`landing.flow.${i + 1}.title`)}</h3>
+              <p className="muted small">{t(`landing.flow.${i + 1}.text`)}</p>
             </div>
           ))}
         </div>
@@ -134,27 +123,27 @@ export default function Landing() {
 
       <section id="competencies" className="l-section">
         <div className="l-section-head">
-          <div className="kicker">Не өлшенеді</div>
-          <h2>Кәсіби құзыреттің бес құрамдасы</h2>
+          <div className="kicker">{t('landing.comp.kicker')}</div>
+          <h2>{t('landing.comp.title')}</h2>
         </div>
         <div className="comp-row">
           {COMPETENCIES.map((c, i) => (
-            <span key={c.key} className="comp-pill"><b>0{i + 1}</b>{c.label}</span>
+            <span key={c.key} className="comp-pill"><b>0{i + 1}</b>{t(`comp.${c.key}`)}</span>
           ))}
         </div>
       </section>
 
       <section className="cta-band">
-        <h2>Бастауға дайынсыз ба?</h2>
-        <p>Тіркеліп, кіріс диагностикадан өтіңіз — нәтижелеріңіз аккаунтыңызда сақталады.</p>
+        <h2>{t('landing.cta.title')}</h2>
+        <p>{t('landing.cta.text')}</p>
         <Link to="/auth?mode=register" className="btn btn-lg">
-          <Gamepad2 size={20} /> Курсты бастау
+          <Gamepad2 size={20} /> {t('common.startCourse')}
         </Link>
       </section>
 
       <footer className="l-footer">
         <span>UstazLab · ОҚПУ · 7M01601</span>
-        <span>Тарих пәнін оқытудың инновациялық әдістері</span>
+        <span>{t('landing.footer.topic')}</span>
       </footer>
     </div>
   );
