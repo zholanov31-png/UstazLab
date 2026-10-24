@@ -42,11 +42,11 @@ export default function Visuals() {
               </div>
             </div>
             <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
-              <div className="card" style={{ background: 'var(--input)', borderLeft: '4px solid var(--muted)' }}>
+              <div className="card tint-box" style={{ '--stripe': 'var(--muted)' }}>
                 <h4 className="small muted" style={{ textTransform: 'uppercase', marginBottom: 6 }}>Дәстүрлі ұсыну</h4>
                 <p className="small">{active.script}</p>
               </div>
-              <div className="card" style={{ background: `${active.color}14`, borderLeft: `4px solid ${active.color}` }}>
+              <div className="card tint-box" style={{ '--stripe': active.color }}>
                 <h4 className="small" style={{ color: active.color, textTransform: 'uppercase', marginBottom: 6 }}>Цифрлық тәсіл</h4>
                 <p className="small">{active.remake}</p>
               </div>

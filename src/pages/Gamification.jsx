@@ -105,7 +105,7 @@ export default function Gamification() {
               <h5 className="small" style={{ color: q.color, textTransform: 'uppercase', margin: 0 }}>Рөлдік карталар</h5>
               <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
                 {q.roles.map((r) => (
-                  <div key={r.name} style={{ background: 'var(--input)', padding: 14, borderRadius: 12, borderLeft: `3px solid ${q.color}` }}>
+                  <div key={r.name} className="tint-box" style={{ '--stripe': q.color }}>
                     <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{r.name}</p>
                     <p className="small muted">{r.desc}</p>
                   </div>

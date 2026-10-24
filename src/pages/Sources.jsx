@@ -37,7 +37,7 @@ export default function Sources() {
               <Compass color={active.color} size={26} style={{ flexShrink: 0 }} /> {active.name}
             </h3>
             <VerifyNote text={active.verify} />
-            <div className="card" style={{ background: 'var(--input)', borderLeft: `4px solid ${active.color}` }}>
+            <div className="card tint-box" style={{ '--stripe': active.color }}>
               <h4 className="small" style={{ color: active.color, textTransform: 'uppercase', marginBottom: 6 }}>Педагогикалық тәсіл</h4>
               <p>{active.pedagogy}</p>
             </div>

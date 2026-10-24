@@ -2,13 +2,15 @@ import { Link } from 'react-router-dom';
 import {
   Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip,
 } from 'recharts';
-import { Award, BarChart3, CheckCircle2, ClipboardCheck, Circle, LayoutGrid, Lock, TrendingUp } from 'lucide-react';
+import {
+  Award, BarChart3, CheckCircle2, ClipboardCheck, Circle, LayoutGrid, Lock, TrendingUp, Sparkles,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { chartColors, useTheme } from '../context/ThemeContext';
 import { useProgress } from '../lib/useProgress';
 import { COMPETENCIES } from '../data/competencies';
 import { courseModules } from '../data/modules';
-import { ErrorBox, PageLoading } from '../components/ui';
+import { ErrorBox, PageLoading, PageHeader } from '../components/ui';
 import { BadgeGrid, LevelBar } from '../components/Game';
 
 function Step({ done, locked, title, text, action }) {
@@ -51,9 +53,12 @@ export default function Dashboard() {
 
   return (
     <div className="stack" style={{ gap: 24 }}>
-      <div>
-        <h2 style={{ fontSize: 26, fontWeight: 800 }}>Қош келдіңіз, {profile?.full_name?.split(' ')[0] || 'әріптес'}!</h2>
-        <p className="muted">Курс үш кезеңнен тұрады. Нәтижеңіз әр кезеңнен кейін сақталады.</p>
+      <div style={{ marginBottom: -24 }}>
+        <PageHeader
+          icon={Sparkles}
+          title={`Қош келдіңіз, ${profile?.full_name?.split(' ')[0] || 'әріптес'}!`}
+          subtitle="Курс үш кезеңнен тұрады. Нәтижеңіз әр кезеңнен кейін сақталады."
+        />
       </div>
 
       <ErrorBox error={progress.error} />

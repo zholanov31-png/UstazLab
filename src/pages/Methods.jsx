@@ -34,7 +34,7 @@ export default function Methods() {
               <Target color={active.color} size={26} style={{ flexShrink: 0 }} /> {active.name}
             </h3>
             <VerifyNote text={active.verify} />
-            <div className="card" style={{ background: 'var(--input)', borderLeft: `4px solid ${active.color}` }}>
+            <div className="card tint-box" style={{ '--stripe': active.color }}>
               <h4 className="small" style={{ color: active.color, textTransform: 'uppercase', marginBottom: 6 }}>Тарихи негіз</h4>
               <p style={{ fontWeight: 500 }}>{active.fact}</p>
             </div>

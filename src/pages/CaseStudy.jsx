@@ -33,7 +33,7 @@ export default function CaseStudy() {
           >
             <div className="stack" style={{ paddingTop: 18 }}>
               {[['1. Жағдай', d.situation], ['2. Мәселе', d.problem]].map(([label, text]) => (
-                <div key={label} style={{ background: 'var(--input)', padding: 16, borderRadius: 12, borderLeft: `3px solid ${d.color}` }}>
+                <div key={label} className="tint-box" style={{ '--stripe': d.color }}>
                   <h5 className="small" style={{ color: d.color, textTransform: 'uppercase', margin: '0 0 6px' }}>{label}</h5>
                   <p>{text}</p>
                 </div>

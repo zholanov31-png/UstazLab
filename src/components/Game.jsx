@@ -33,7 +33,7 @@ export function LevelBar({ game, compact = false }) {
         </div>
       </div>
       <div className="progress" style={{ marginTop: 12 }}>
-        <div style={{ width: `${Math.round(level.progress * 100)}%`, background: 'var(--warning)' }} />
+        <div className="xp-fill" style={{ width: `${Math.round(level.progress * 100)}%` }} />
       </div>
     </div>
   );

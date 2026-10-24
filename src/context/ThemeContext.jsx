@@ -17,12 +17,17 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(readStoredTheme);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
+    // Тақырып ауысқанда түстер бірден емес, жұмсақ ауыссын
+    const root = document.documentElement;
+    root.classList.add('theme-anim');
+    const t = setTimeout(() => root.classList.remove('theme-anim'), 500);
+    root.dataset.theme = theme;
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch {
       /* жеке терезеде storage жабық болуы мүмкін */
     }
+    return () => clearTimeout(t);
   }, [theme]);
 
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
@@ -34,7 +39,7 @@ export function useTheme() {
 
 // Recharts сияқты CSS айнымалыларын оқи алмайтын кітапханаларға арналған түстер
 export const chartColors = {
-  light: { grid: '#e2e8f0', axis: '#64748b', pre: '#94a3b8', post: '#10b981' },
-  dark: { grid: '#334155', axis: '#94a3b8', pre: '#64748b', post: '#34d399' },
-  nomad: { grid: '#ccdbd5', axis: '#4e655d', pre: '#94a3b8', post: '#0d9488' },
+  light: { grid: '#dcd6f2', axis: '#676281', pre: '#b6abe6', post: '#6b4dff' },
+  dark: { grid: '#3a3560', axis: '#a39fc4', pre: '#6f6799', post: '#b9a8ff' },
+  nomad: { grid: '#cddcd5', axis: '#4e655d', pre: '#a9c4bb', post: '#0f8f86' },
 };

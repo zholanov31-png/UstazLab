@@ -10,21 +10,23 @@ export function PageLoading() {
   );
 }
 
+// Әр беттің басындағы шыны панель (басты беттегі суретпен біркелкі стиль)
 export function PageHeader({ icon: Icon, color, title, subtitle, children }) {
   return (
-    <div className="row-between" style={{ marginBottom: 24 }}>
-      <div className="page-header" style={{ marginBottom: 0 }}>
+    <div className="page-hero">
+      <img className="page-hero-img" src="/img/hero-glass.webp" alt="" aria-hidden="true" />
+      <div className="page-hero-body">
         {Icon && (
-          <div className="icon-box" style={color ? { color, background: `${color}1f` } : undefined}>
+          <div className="icon-box icon-grad" style={color ? { '--c': color } : undefined}>
             <Icon size={26} />
           </div>
         )}
-        <div>
+        <div style={{ minWidth: 0 }}>
           <h2>{title}</h2>
           {subtitle && <p>{subtitle}</p>}
         </div>
       </div>
-      {children}
+      {children && <div className="page-hero-actions">{children}</div>}
     </div>
   );
 }

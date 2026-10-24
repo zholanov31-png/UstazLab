@@ -13,7 +13,7 @@ export default function Methodology() {
       />
       <div className="grid">
         {methodologyFiles.map((file) => (
-          <div key={file.id} className="card stack-sm" style={{ borderTop: `4px solid ${file.color}` }}>
+          <div key={file.id} className="card card-accent stack-sm" style={{ '--stripe': file.color }}>
             <div className="row-between">
               <span className="badge" style={{ color: file.color, background: `${file.color}1a` }}>{file.type}</span>
               <span className="small muted row" style={{ gap: 4 }}><FileText size={14} /> {file.format}</span>
