@@ -721,3 +721,6 @@ table.wrap th, table.wrap td { white-space: normal; vertical-align: top; }
   .topbar .brand-name { display: none; }
   .topbar-inner { gap: 8px; }
 }
+
+/* Әлі толықтырылмаған бөлім карточкасы */
+.card-soon { border-style: dashed; border-color: color-mix(in srgb, var(--stripe, var(--accent)) 35%, transparent); }
