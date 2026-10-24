@@ -23,6 +23,15 @@ const FLOW = [
 
 const CHIP_ICONS = [Sparkles, BookOpen, Compass, MessagesSquare, Target];
 
+// Станция мұқабалары (AI арқылы жасалған сәндік суреттер, Canva).
+// 4 және 5 үшін сурет әлі жоқ — уақытша шыны белгіше көрсетіледі.
+const STATION_IMG = {
+  1: '/img/station-1.webp',
+  2: '/img/station-2.webp',
+  3: '/img/station-3.webp',
+};
+const STATION_ICON = { 4: Trophy, 5: BookOpen };
+
 export default function Landing() {
   return (
     <div className="container landing">
@@ -42,43 +51,42 @@ export default function Landing() {
         </div>
       </nav>
 
-      <section className="hero">
-        <div className="stack" style={{ gap: 22 }}>
-          <span className="eyebrow"><b>DGBL</b> Тарихты оқытудың инновациялық әдістері</span>
-          <h1>
-            Болашақ тарих педагогінің <span className="grad-text">кәсіби құзыреттілігін</span> дамыту
-          </h1>
-          <p className="hero-lead">
-            Бес инновациялық әдісті ойын форматында меңгеруге және кәсіби құзыреттің өсуін өлшеуге арналған цифрлық практикум.
-          </p>
-          <div className="row">
-            <Link to="/auth?mode=register" className="btn btn-primary btn-lg">
-              Курсты бастау <ArrowRight size={20} />
-            </Link>
-            <a href="#stations" className="btn btn-secondary btn-lg">Толығырақ</a>
+      <section className="hero-panel">
+        <img className="hero-bg" src="/img/hero-glass.webp" alt="" width="1600" height="899" />
+        <div className="hero-veil" />
+        <div className="hero">
+          <div className="stack hero-copy" style={{ gap: 22 }}>
+            <span className="eyebrow"><b>DGBL</b> Тарихты оқытудың инновациялық әдістері</span>
+            <h1>
+              Болашақ тарих педагогінің <span className="grad-text">кәсіби құзыреттілігін</span> дамыту
+            </h1>
+            <p className="hero-lead">
+              Бес инновациялық әдісті ойын форматында меңгеруге және кәсіби құзыреттің өсуін өлшеуге арналған цифрлық практикум.
+            </p>
+            <div className="row">
+              <Link to="/auth?mode=register" className="btn btn-primary btn-lg">
+                Курсты бастау <ArrowRight size={20} />
+              </Link>
+              <a href="#stations" className="btn btn-secondary btn-lg">Толығырақ</a>
+            </div>
+            <div className="hero-meta">
+              <div><strong>5</strong><span>инновациялық әдіс</span></div>
+              <div><strong>5</strong><span>өлшенетін құзырет</span></div>
+              <div><strong>pre / post</strong><span>диагностика</span></div>
+            </div>
           </div>
-          <div className="hero-meta">
-            <div><strong>5</strong><span>инновациялық әдіс</span></div>
-            <div><strong>5</strong><span>өлшенетін құзырет</span></div>
-            <div><strong>pre / post</strong><span>диагностика</span></div>
-          </div>
-        </div>
 
-        <div className="scene" aria-hidden="true">
-          <div className="scene-glow" />
-          <div className="ring ring-3" />
-          <div className="ring ring-1" />
-          <div className="ring ring-2" />
-          <div className="orb"><Trophy size={44} strokeWidth={1.6} /></div>
-          {COMPETENCIES.slice(0, 4).map((c, i) => {
-            const Icon = CHIP_ICONS[i];
-            return (
-              <div key={c.key} className={`chip chip-${i + 1}`}>
-                <i><Icon size={14} /></i>{c.short}
-              </div>
-            );
-          })}
-          <div className="chip chip-5 xp"><i><Star size={14} /></i>+20 XP</div>
+          <div className="scene" aria-hidden="true">
+            {COMPETENCIES.slice(0, 4).map((c, i) => {
+              const Icon = CHIP_ICONS[i];
+              return (
+                <div key={c.key} className={`chip chip-${i + 1}`}>
+                  <i><Icon size={14} /></i>{c.short}
+                </div>
+              );
+            })}
+            <div className="chip chip-5 xp"><i><Star size={14} /></i>+20 XP</div>
+          </div>
         </div>
       </section>
 
@@ -91,7 +99,12 @@ export default function Landing() {
         <div className="station-grid">
           {courseModules.map((m) => (
             <div key={m.id} className="card station">
-              <span className="station-num">0{m.id}</span>
+              <div className="station-cover">
+                {STATION_IMG[m.id]
+                  ? <img src={STATION_IMG[m.id]} alt="" width="640" height="640" loading="lazy" />
+                  : <div className="station-cover-fallback">{(() => { const I = STATION_ICON[m.id]; return <I size={56} strokeWidth={1.4} />; })()}</div>}
+                <span className="station-num">0{m.id}</span>
+              </div>
               <h3>{m.method}</h3>
               <p>{STATION_TEXT[m.id]}</p>
               {m.ready
