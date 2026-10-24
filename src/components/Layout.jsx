@@ -41,7 +41,7 @@ export default function Layout() {
     navigate('/', { replace: true });
   };
 
-  const roleLabel = { student: 'Магистрант', teacher: 'Мұғалім', researcher: 'Зерттеуші' }[profile?.role] || '';
+  const roleLabel = { student: 'Студент', teacher: 'Мұғалім', researcher: 'Зерттеуші' }[profile?.role] || '';
 
   return (
     <div className="app-shell">
@@ -52,7 +52,7 @@ export default function Layout() {
               <Menu size={22} />
             </button>
             <Link to="/app" className="brand">
-              <Sparkles size={22} color="var(--brand)" />
+              <span className="brand-mark"><Sparkles size={17} /></span>
               <span className="brand-name">UstazLab</span>
             </Link>
           </div>
@@ -70,7 +70,7 @@ export default function Layout() {
       <aside className={`sidebar ${menuOpen ? 'open' : ''}`} aria-hidden={!menuOpen}>
         <div className="row-between" style={{ marginBottom: 8 }}>
           <span className="brand">
-            <Sparkles size={22} color="var(--brand)" />
+            <span className="brand-mark"><Sparkles size={17} /></span>
             <span className="brand-name">UstazLab</span>
           </span>
           <button className="icon-btn" onClick={() => setMenuOpen(false)} aria-label="Жабу">

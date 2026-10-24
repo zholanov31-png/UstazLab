@@ -8,7 +8,7 @@ import { downloadCsv, fmt, mannWhitney, mean, pairedSummary } from '../lib/stats
 import { isControlGroup } from '../lib/useProgress';
 import { ErrorBox, PageHeader, PageLoading } from '../components/ui';
 
-const ROLE = { student: 'Магистрант', teacher: 'Мұғалім', researcher: 'Зерттеуші' };
+const ROLE = { student: 'Студент', teacher: 'Мұғалім', researcher: 'Зерттеуші' };
 const avgScore = (scores) =>
   scores ? COMPETENCIES.reduce((s, c) => s + (scores[c.key] ?? 0), 0) / COMPETENCIES.length : null;
 const today = () => new Date().toISOString().slice(0, 10);

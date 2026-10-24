@@ -22,7 +22,7 @@ export default function AuthPage() {
     setInfo('');
 
     if (isRegister) {
-      if (!form.role) return setError('Мәртебеңізді таңдаңыз: магистрант немесе мұғалім.');
+      if (!form.role) return setError('Мәртебеңізді таңдаңыз: студент немесе мұғалім.');
       if (form.fullName.trim().length < 3) return setError('Аты-жөніңізді толық жазыңыз.');
       if (form.password.length < 6) return setError('Құпиясөз кемінде 6 таңбадан тұруы керек.');
     }
@@ -58,7 +58,7 @@ export default function AuthPage() {
       <div className="card stack" style={{ padding: 32, boxShadow: 'var(--shadow)' }}>
         <div className="center stack-sm">
           <Link to="/" className="brand" style={{ justifyContent: 'center' }}>
-            <Sparkles size={26} color="var(--brand)" />
+            <span className="brand-mark" style={{ width: 38, height: 38, borderRadius: 12 }}><Sparkles size={21} /></span>
             <span className="brand-name" style={{ fontSize: 28 }}>UstazLab</span>
           </Link>
           <p className="muted">{isRegister ? 'Жаңа аккаунт жасау' : 'Жеке кабинетке кіру'}</p>
@@ -73,7 +73,7 @@ export default function AuthPage() {
               <div className="field">
                 <label>Мәртебеңіз</label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <RoleCard value="student" icon={GraduationCap} label="Магистрант" />
+                  <RoleCard value="student" icon={GraduationCap} label="Студент" />
                   <RoleCard value="teacher" icon={BookOpen} label="Мұғалім" />
                 </div>
               </div>
